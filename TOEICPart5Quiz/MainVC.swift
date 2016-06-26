@@ -43,7 +43,8 @@ class MainVC: UIViewController {
         
         let dict: NSDictionary! = (try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
         
-        for var i = 0; i < (dict.valueForKey("results") as! NSArray).count; i++ {
+//        for var i = 0; i < (dict.valueForKey("results") as! NSArray).count; i += 1
+        for i in 0 ..< (dict.valueForKey("results") as! NSArray).count {
             arrDict.addObject((dict.valueForKey("results") as! NSArray).objectAtIndex(i))
         }
         

@@ -40,14 +40,14 @@ class QuizVC: UIViewController {
         
         print(questionsGetted.count)
         beginButtonLabel.enabled = false
-        nextQuestionButtonLabel.enabled = false
+        nextQuestionButtonLabel.enabled = true
         questionNow = getOneQuestion()
         updateQuestionLabel()
     }
 
     @IBAction func nextQuestionButtonPressed(sender: UIButton) {
         
-        countQuestion++
+        countQuestion += 1
         nextQuestionButtonLabel.enabled = false
         updateStateAnswers("normal")
         
@@ -66,7 +66,7 @@ class QuizVC: UIViewController {
         if answerArrayCheck[sender.tag] == "right" {
             
             print("You are correct!")
-            correctNumber++
+            correctNumber += 1
             correctNumberLabel.text = checkLabel("\(correctNumber)")
         } else {
             print("You are wrong!")
@@ -86,7 +86,7 @@ class QuizVC: UIViewController {
             let random = Int(arc4random_uniform(UInt32(questionsGetted.count)))
             question = questionsGetted[random]
             questionsGetted.removeAtIndex(random)
-            totalQuestion++
+            totalQuestion += 1
         } else if questionsGetted.count == 0 {
             
             nextQuestionButtonLabel.setTitle("Finish", forState: .Normal)
@@ -177,15 +177,15 @@ class QuizVC: UIViewController {
             self.answer1ButtonLabel.alpha = 1.0
             self.answer1ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: { () -> Void in
+        UIView.animateWithDuration(0.5, delay: 0.3, options: [], animations: { () -> Void in
             self.answer2ButtonLabel.alpha = 1.0
             self.answer2ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: { () -> Void in
+        UIView.animateWithDuration(0.5, delay: 0.4, options: [], animations: { () -> Void in
             self.answer3ButtonLabel.alpha = 1.0
             self.answer3ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: { () -> Void in
+        UIView.animateWithDuration(0.5, delay: 0.5, options: [], animations: { () -> Void in
             self.answer4ButtonLabel.alpha = 1.0
             self.answer4ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
@@ -236,6 +236,7 @@ class QuizVC: UIViewController {
         getManyQuestions(questionsFullTest, numQuestion: 40)
         
         beginButtonLabel.enabled = true
+        nextQuestionButtonLabel.enabled = false
         
         print(questionsFullTest.count)
         updateStateAnswers("normal")
