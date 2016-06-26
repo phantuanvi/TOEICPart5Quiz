@@ -43,7 +43,6 @@ class MainVC: UIViewController {
         
         let dict: NSDictionary! = (try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
         
-//        for var i = 0; i < (dict.valueForKey("results") as! NSArray).count; i += 1
         for i in 0 ..< (dict.valueForKey("results") as! NSArray).count {
             arrDict.addObject((dict.valueForKey("results") as! NSArray).objectAtIndex(i))
         }
@@ -94,6 +93,10 @@ extension MainVC: UITableViewDataSource {
         let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
         
         cell.textLabel?.text = nameTests[indexPath.row]
+        
+        cell.textLabel?.textColor = TEXTCOLOR
+        cell.backgroundColor = MAINCOLOR
+        
         return cell
     }
     
