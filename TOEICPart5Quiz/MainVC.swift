@@ -34,28 +34,27 @@ class MainVC: UIViewController {
     
     // MARK: - my function
     // Parsing Data from JSON file
-    func jsonParsingFromFile(nameFile: String) -> [QuestionAndAnswer] {
+    func jsonParsingFromFile(_ nameFile: String) -> [QuestionAndAnswer] {
         var questionTest = [QuestionAndAnswer]()
-        let arrDict: NSMutableArray = []
         
-        let path: NSString = NSBundle.mainBundle().pathForResource(nameFile, ofType: "json")!
-        let data: NSData = try! NSData(contentsOfFile: path as String, options: NSDataReadingOptions.DataReadingMapped)
+        let path: NSString = Bundle.main.path(forResource: nameFile, ofType: "json")! as NSString
+        let data: Data = try! Data(contentsOf: URL(fileURLWithPath: path as String), options: NSData.ReadingOptions.dataReadingMapped)
         
-        let dict: NSDictionary! = (try! NSJSONSerialization.JSONObjectWithData(data, options: NSJSONReadingOptions.MutableContainers)) as! NSDictionary
+        let dict: NSDictionary! = (try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)) as! NSDictionary
         
-        for i in 0 ..< (dict.valueForKey("results") as! NSArray).count {
-            arrDict.addObject((dict.valueForKey("results") as! NSArray).objectAtIndex(i))
-        }
-        
-        // addQuestionToArr()
-        for arr in arrDict {
-            
-            let question = arr["question"] as! String
-            let answerCorrect = arr["answerCorrect"] as! String
-            let answerArray = [arr["answer1"] as! String, arr["answer2"] as! String, arr["answer3"] as! String, arr["answer4"] as! String]
-            let oneQuestion = QuestionAndAnswer(question: question, answerArray: answerArray, answerCorrect: answerCorrect)
-            
-            questionTest.append(oneQuestion)
+        if let dictTempt = dict as? Dictionary<String, AnyObject> {
+            if let arrDict = dictTempt["results"] as? [[String:Any]] {
+                // addQuestionToArr()
+                for arr in arrDict {
+                    
+                    let question = arr["question"] as! String
+                    let answerCorrect = arr["answerCorrect"] as! String
+                    let answerArray = [arr["answer1"] as! String, arr["answer2"] as! String, arr["answer3"] as! String, arr["answer4"] as! String]
+                    let oneQuestion = QuestionAndAnswer(question: question, answerArray: answerArray, answerCorrect: answerCorrect)
+                    
+                    questionTest.append(oneQuestion)
+                }
+            }
         }
         
         print("Parsing from file \(nameFile).json done. Have \(questionTest.count) questions")
@@ -63,14 +62,14 @@ class MainVC: UIViewController {
     }
     
     // MARK: - Navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
         if segue.identifier == "quizSegue" {
             
-            let nextScene = segue.destinationViewController as! QuizVC
+            let nextScene = segue.destination as! QuizVC
             
             if let indexPath = self.tableView.indexPathForSelectedRow {
-                let test = questionFullTestArray[indexPath.row]
+                let test = questionFullTestArray[(indexPath as NSIndexPath).row]
                 nextScene.questionsFullTest = test
             }
         }
@@ -79,20 +78,20 @@ class MainVC: UIViewController {
 }
 
 extension MainVC: UITableViewDelegate {
-    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-        tableView.deselectRowAtIndexPath(indexPath, animated: true)
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
 extension MainVC: UITableViewDataSource {
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return nameTests.count
     }
     
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("cell", forIndexPath: indexPath)
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        cell.textLabel?.text = nameTests[indexPath.row]
+        cell.textLabel?.text = nameTests[(indexPath as NSIndexPath).row]
         
         cell.textLabel?.textColor = TEXTCOLOR
         cell.backgroundColor = MAINCOLOR

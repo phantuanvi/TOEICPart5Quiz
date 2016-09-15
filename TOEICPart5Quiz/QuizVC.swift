@@ -36,32 +36,32 @@ class QuizVC: UIViewController {
     
     // MARK: - Action
     
-    @IBAction func beginButtonPressed(sender: UIButton) {
+    @IBAction func beginButtonPressed(_ sender: UIButton) {
         
         print(questionsGetted.count)
-        beginButtonLabel.enabled = false
-        nextQuestionButtonLabel.enabled = true
+        beginButtonLabel.isEnabled = false
+        nextQuestionButtonLabel.isEnabled = true
         questionNow = getOneQuestion()
         updateQuestionLabel()
     }
 
-    @IBAction func nextQuestionButtonPressed(sender: UIButton) {
+    @IBAction func nextQuestionButtonPressed(_ sender: UIButton) {
         
         countQuestion += 1
-        nextQuestionButtonLabel.enabled = false
+        nextQuestionButtonLabel.isEnabled = false
         updateStateAnswers("normal")
         
-        answer1ButtonLabel.enabled = true
-        answer2ButtonLabel.enabled = true
-        answer3ButtonLabel.enabled = true
-        answer4ButtonLabel.enabled = true
+        answer1ButtonLabel.isEnabled = true
+        answer2ButtonLabel.isEnabled = true
+        answer3ButtonLabel.isEnabled = true
+        answer4ButtonLabel.isEnabled = true
         
         questionNow = getOneQuestion()
         
         updateQuestionLabel()
     }
     
-    @IBAction func answer(sender: UIButton) {
+    @IBAction func answer(_ sender: UIButton) {
         
         if answerArrayCheck[sender.tag] == "right" {
             
@@ -72,7 +72,7 @@ class QuizVC: UIViewController {
             print("You are wrong!")
         }
         
-        nextQuestionButtonLabel.enabled = true
+        nextQuestionButtonLabel.isEnabled = true
         
         updateStateAnswers("stateAnswer")
     }
@@ -85,36 +85,36 @@ class QuizVC: UIViewController {
             
             let random = Int(arc4random_uniform(UInt32(questionsGetted.count)))
             question = questionsGetted[random]
-            questionsGetted.removeAtIndex(random)
+            questionsGetted.remove(at: random)
             totalQuestion += 1
         } else if questionsGetted.count == 0 {
             
-            nextQuestionButtonLabel.setTitle("Finish", forState: .Normal)
+            nextQuestionButtonLabel.setTitle("Finish", for: UIControlState())
             
             var messageString: String = "You got \(correctNumber) points"
             if correctNumber == totalQuestion {
                 messageString += "\nYou are excellent!"
             }
-            let alert = UIAlertController(title: "You have finished your test", message: messageString, preferredStyle: UIAlertControllerStyle.ActionSheet)
-            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { _ in
-                self.dismissViewControllerAnimated(true, completion: nil)
+            let alert = UIAlertController(title: "You have finished your test", message: messageString, preferredStyle: UIAlertControllerStyle.actionSheet)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { _ in
+                self.dismiss(animated: true, completion: nil)
             })
             
             alert.addAction(okAction)
-            presentViewController(alert, animated: true, completion: nil)
+            present(alert, animated: true, completion: nil)
         }
         
         return question
     }
     
-    func getManyQuestions(originQuestions: [QuestionAndAnswer], numQuestion: Int) {
+    func getManyQuestions(_ originQuestions: [QuestionAndAnswer], numQuestion: Int) {
         
         var questions = originQuestions
         for _ in 1...numQuestion {
             
             let random = Int(arc4random_uniform(UInt32(questions.count)))
             questionsGetted.append(questions[random])
-            questions.removeAtIndex(random)
+            questions.remove(at: random)
         }
         
         totalQuestion = 0
@@ -122,14 +122,14 @@ class QuizVC: UIViewController {
         print("You just get \(numQuestion) question")
     }
     
-    func updateStateAnswers(state: String) {
+    func updateStateAnswers(_ state: String) {
         
         if state == "normal" {
             let blueeColor = UIColor(red: 0.000, green: 0.502, blue: 1.000, alpha: 1.00)
-            answer1ButtonLabel.setTitleColor(blueeColor, forState: .Normal)
-            answer2ButtonLabel.setTitleColor(blueeColor, forState: .Normal)
-            answer3ButtonLabel.setTitleColor(blueeColor, forState: .Normal)
-            answer4ButtonLabel.setTitleColor(blueeColor, forState: .Normal)
+            answer1ButtonLabel.setTitleColor(blueeColor, for: UIControlState())
+            answer2ButtonLabel.setTitleColor(blueeColor, for: UIControlState())
+            answer3ButtonLabel.setTitleColor(blueeColor, for: UIControlState())
+            answer4ButtonLabel.setTitleColor(blueeColor, for: UIControlState())
         }
         
         if state == "stateAnswer" {
@@ -137,55 +137,57 @@ class QuizVC: UIViewController {
             var checkColor = [UIColor(), UIColor(), UIColor(), UIColor()]
             for i in 0..<answerArrayCheck.count {
                 if answerArrayCheck[i] == "right" {
-                    checkColor[i] = UIColor.redColor()
+                    checkColor[i] = UIColor.red
                 } else {
-                    checkColor[i] = UIColor.grayColor()
+                    checkColor[i] = UIColor.gray
                 }
             }
             
-            answer1ButtonLabel.setTitleColor(checkColor[0], forState: .Normal)
-            answer2ButtonLabel.setTitleColor(checkColor[1], forState: .Normal)
-            answer3ButtonLabel.setTitleColor(checkColor[2], forState: .Normal)
-            answer4ButtonLabel.setTitleColor(checkColor[3], forState: .Normal)
+            answer1ButtonLabel.setTitleColor(checkColor[0], for: UIControlState())
+            answer2ButtonLabel.setTitleColor(checkColor[1], for: UIControlState())
+            answer3ButtonLabel.setTitleColor(checkColor[2], for: UIControlState())
+            answer4ButtonLabel.setTitleColor(checkColor[3], for: UIControlState())
             
             print(answerArrayCheck)
-            answer1ButtonLabel.enabled = false
-            answer2ButtonLabel.enabled = false
-            answer3ButtonLabel.enabled = false
-            answer4ButtonLabel.enabled = false
+            answer1ButtonLabel.isEnabled = false
+            answer2ButtonLabel.isEnabled = false
+            answer3ButtonLabel.isEnabled = false
+            answer4ButtonLabel.isEnabled = false
         }
     }
     
     func updateQuestionLabel() {
         
-        countQuestionLabel.text = checkLabel("\(countQuestion)")
+        if countQuestion <= 40 {
+            countQuestionLabel.text = checkLabel("\(countQuestion)")
+        }
         
         questionLabel.text = self.questionNow.question
-        UIView.animateWithDuration(0.5, delay: 0.1, options: [], animations: { () -> Void in
+        UIView.animate(withDuration: 0.5, delay: 0.1, options: [], animations: { () -> Void in
             self.questionLabel.alpha = 1.0
             self.questionLabel.center.x += self.view.bounds.width
             }, completion: nil)
         
         // mix array answer
-        questionNow.answerArray.sortInPlace{(a,b) -> Bool in return rand()%2==0}
+        questionNow.answerArray.sort{(a,b) -> Bool in return arc4random()%2==0}
         
-        answer1ButtonLabel.setTitle(questionNow.answerArray[0], forState: .Normal)
-        answer2ButtonLabel.setTitle(questionNow.answerArray[1], forState: .Normal)
-        answer3ButtonLabel.setTitle(questionNow.answerArray[2], forState: .Normal)
-        answer4ButtonLabel.setTitle(questionNow.answerArray[3], forState: .Normal)
-        UIView.animateWithDuration(0.5, delay: 0.2, options: [], animations: { () -> Void in
+        answer1ButtonLabel.setTitle(questionNow.answerArray[0], for: UIControlState())
+        answer2ButtonLabel.setTitle(questionNow.answerArray[1], for: UIControlState())
+        answer3ButtonLabel.setTitle(questionNow.answerArray[2], for: UIControlState())
+        answer4ButtonLabel.setTitle(questionNow.answerArray[3], for: UIControlState())
+        UIView.animate(withDuration: 0.5, delay: 0.2, options: [], animations: { () -> Void in
             self.answer1ButtonLabel.alpha = 1.0
             self.answer1ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.3, options: [], animations: { () -> Void in
+        UIView.animate(withDuration: 0.5, delay: 0.3, options: [], animations: { () -> Void in
             self.answer2ButtonLabel.alpha = 1.0
             self.answer2ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.4, options: [], animations: { () -> Void in
+        UIView.animate(withDuration: 0.5, delay: 0.4, options: [], animations: { () -> Void in
             self.answer3ButtonLabel.alpha = 1.0
             self.answer3ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
-        UIView.animateWithDuration(0.5, delay: 0.5, options: [], animations: { () -> Void in
+        UIView.animate(withDuration: 0.5, delay: 0.5, options: [], animations: { () -> Void in
             self.answer4ButtonLabel.alpha = 1.0
             self.answer4ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
@@ -217,7 +219,7 @@ class QuizVC: UIViewController {
         answer4ButtonLabel.alpha = 0.0
     }
     
-    func checkLabel(label: String) -> String {
+    func checkLabel(_ label: String) -> String {
         
         let newLabel: String!
         if label.characters.count == 1 {
@@ -229,14 +231,14 @@ class QuizVC: UIViewController {
         return newLabel
     }
     
-    // MARK: - viewDid
+    // MARK: - Lifecyle
     override func viewDidLoad() {
         super.viewDidLoad()
 
         getManyQuestions(questionsFullTest, numQuestion: 40)
         
-        beginButtonLabel.enabled = true
-        nextQuestionButtonLabel.enabled = false
+        beginButtonLabel.isEnabled = true
+        nextQuestionButtonLabel.isEnabled = false
         
         print(questionsFullTest.count)
         updateStateAnswers("normal")
