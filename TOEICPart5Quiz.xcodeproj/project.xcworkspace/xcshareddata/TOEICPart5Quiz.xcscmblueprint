@@ -1,0 +1,37 @@
+{
+  "DVTSourceControlWorkspaceBlueprintPrimaryRemoteRepositoryKey" : "045B57766BF8E795B5CD153021D164ED82F802B1+++FF5FD5C",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyRepositoryLocationsKey" : {
+
+  },
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyStatesKey" : {
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++CB59E81" : 9223372036854775807,
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++D80BDD7" : 9223372036854775807,
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++FF5FD5C" : 9223372036854775807
+  },
+  "DVTSourceControlWorkspaceBlueprintIdentifierKey" : "D50EEBD7-515E-4F26-A7EE-D4772F4D2EF2",
+  "DVTSourceControlWorkspaceBlueprintWorkingCopyPathsKey" : {
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++CB59E81" : "",
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++D80BDD7" : "",
+    "045B57766BF8E795B5CD153021D164ED82F802B1+++FF5FD5C" : "sever\/"
+  },
+  "DVTSourceControlWorkspaceBlueprintNameKey" : "TOEICPart5Quiz",
+  "DVTSourceControlWorkspaceBlueprintVersion" : 204,
+  "DVTSourceControlWorkspaceBlueprintRelativePathToProjectKey" : "TOEICPart5Quiz.xcodeproj",
+  "DVTSourceControlWorkspaceBlueprintRemoteRepositoriesKey" : [
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/phantuanvi\/TOEICPart5Quiz.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "045B57766BF8E795B5CD153021D164ED82F802B1+++CB59E81"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/phantuanvi\/TOEICPart5Quiz.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "045B57766BF8E795B5CD153021D164ED82F802B1+++D80BDD7"
+    },
+    {
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryURLKey" : "https:\/\/github.com\/phantuanvi\/TOEICPart5Quiz.git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositorySystemKey" : "com.apple.dt.Xcode.sourcecontrol.Git",
+      "DVTSourceControlWorkspaceBlueprintRemoteRepositoryIdentifierKey" : "045B57766BF8E795B5CD153021D164ED82F802B1+++FF5FD5C"
+    }
+  ]
+}

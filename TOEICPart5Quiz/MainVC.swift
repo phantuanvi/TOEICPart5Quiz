@@ -12,6 +12,7 @@ class MainVC: UIViewController {
     
     // MARK: - Outlet
     @IBOutlet weak var tableView: UITableView!
+
     
     // MARK: - variables
     let nameTests = ["Test 1"]
@@ -26,10 +27,15 @@ class MainVC: UIViewController {
         tableView.dataSource = self
         tableView.alwaysBounceVertical = false
         
-        test1 = jsonParsingFromFile("part501")
-        
-        questionFullTestArray[0] = test1
-        print("element in questionFullTestArray: \(questionFullTestArray.count)")
+        DispatchQueue.global(qos: DispatchQoS.userInitiated.qosClass).async {
+            self.test1 = self.jsonParsingFromFile("part501")
+            
+            self.questionFullTestArray[0] = self.test1
+            
+            DispatchQueue.main.async {
+                print("element in questionFullTestArray: \(self.questionFullTestArray.count)")
+            }
+        }
     }
     
     // MARK: - my function
@@ -38,29 +44,31 @@ class MainVC: UIViewController {
         var questionTest = [QuestionAndAnswer]()
         
         let path: NSString = Bundle.main.path(forResource: nameFile, ofType: "json")! as NSString
-        let data: Data = try! Data(contentsOf: URL(fileURLWithPath: path as String), options: NSData.ReadingOptions.dataReadingMapped)
-        
-        let dict: NSDictionary! = (try! JSONSerialization.jsonObject(with: data, options: JSONSerialization.ReadingOptions.mutableContainers)) as! NSDictionary
-        
-        if let dictTempt = dict as? Dictionary<String, AnyObject> {
-            if let arrDict = dictTempt["results"] as? [[String:Any]] {
-                // addQuestionToArr()
-                for arr in arrDict {
-                    
-                    let question = arr["question"] as! String
-                    let answerCorrect = arr["answerCorrect"] as! String
-                    let answerArray = [arr["answer1"] as! String, arr["answer2"] as! String, arr["answer3"] as! String, arr["answer4"] as! String]
-                    let oneQuestion = QuestionAndAnswer(question: question, answerArray: answerArray, answerCorrect: answerCorrect)
-                    
-                    questionTest.append(oneQuestion)
-                }
-            }
-        }
+        let data: Data = try! Data(contentsOf: URL(fileURLWithPath: path as String), options: [])
+        questionTest = listQAsFromJSONData(jsonData: data)
         
         print("Parsing from file \(nameFile).json done. Have \(questionTest.count) questions")
         return questionTest
     }
     
+    // List Question and answer from JSON Data
+    func listQAsFromJSONData(jsonData: Data) -> [QuestionAndAnswer] {
+        guard let dict = try? JSONSerialization.jsonObject(with: jsonData, options: []),
+            let dictTemp = dict as? Dictionary<String, Any>,
+            let jsonQAs = dictTemp["results"] as? [Dictionary<String, Any>] else {return []}
+        
+        return jsonQAs.flatMap({ (qADesc: Dictionary) -> QuestionAndAnswer? in
+            guard let question = qADesc["question"] as? String,
+                let answerCorrect = qADesc["answerCorrect"] as? String,
+                let answer1 = qADesc["answer1"] as? String,
+                let answer2 = qADesc["answer2"] as? String,
+                let answer3 = qADesc["answer3"] as? String,
+                let answer4 = qADesc["answer4"] as? String
+                else {return nil}
+            return QuestionAndAnswer(question: question, answerArray: [answer1, answer2, answer3, answer4], answerCorrect: answerCorrect)
+        })
+    }
+
     // MARK: - Navigation
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         
@@ -74,8 +82,8 @@ class MainVC: UIViewController {
             }
         }
     }
-
 }
+
 
 extension MainVC: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {

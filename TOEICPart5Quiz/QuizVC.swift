@@ -34,13 +34,17 @@ class QuizVC: UIViewController {
     @IBOutlet weak var answer3ButtonLabel: UIButton!
     @IBOutlet weak var answer4ButtonLabel: UIButton!
     
+    var swipeRight = UISwipeGestureRecognizer()
+    var swipeLeft = UISwipeGestureRecognizer()
+    
     // MARK: - Action
     
     @IBAction func beginButtonPressed(_ sender: UIButton) {
         
         print(questionsGetted.count)
         beginButtonLabel.isEnabled = false
-        nextQuestionButtonLabel.isEnabled = true
+        nextQuestionButtonLabel.isEnabled = false
+        swipeRight.isEnabled = false
         questionNow = getOneQuestion()
         updateQuestionLabel()
     }
@@ -49,6 +53,7 @@ class QuizVC: UIViewController {
         
         countQuestion += 1
         nextQuestionButtonLabel.isEnabled = false
+        swipeRight.isEnabled = false
         updateStateAnswers("normal")
         
         answer1ButtonLabel.isEnabled = true
@@ -73,6 +78,7 @@ class QuizVC: UIViewController {
         }
         
         nextQuestionButtonLabel.isEnabled = true
+        swipeRight.isEnabled = true
         
         updateStateAnswers("stateAnswer")
     }
@@ -95,7 +101,7 @@ class QuizVC: UIViewController {
             if correctNumber == totalQuestion {
                 messageString += "\nYou are excellent!"
             }
-            let alert = UIAlertController(title: "You have finished your test", message: messageString, preferredStyle: UIAlertControllerStyle.actionSheet)
+            let alert = UIAlertController(title: "FINISHED", message: messageString, preferredStyle: UIAlertControllerStyle.actionSheet)
             let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { _ in
                 self.dismiss(animated: true, completion: nil)
             })
@@ -107,19 +113,20 @@ class QuizVC: UIViewController {
         return question
     }
     
-    func getManyQuestions(_ originQuestions: [QuestionAndAnswer], numQuestion: Int) {
+    func getManyQuestions(_ originQuestions: [QuestionAndAnswer], numQuestion: Int) -> [QuestionAndAnswer] {
         
-        var questions = originQuestions
+        var questions: [QuestionAndAnswer] = originQuestions
+        var returnQuesttions: [QuestionAndAnswer] = [QuestionAndAnswer]()
+        
         for _ in 1...numQuestion {
-            
             let random = Int(arc4random_uniform(UInt32(questions.count)))
-            questionsGetted.append(questions[random])
+            returnQuesttions.append(questions[random])
             questions.remove(at: random)
         }
-        
-        totalQuestion = 0
 
         print("You just get \(numQuestion) question")
+        
+        return returnQuesttions
     }
     
     func updateStateAnswers(_ state: String) {
@@ -136,11 +143,7 @@ class QuizVC: UIViewController {
             
             var checkColor = [UIColor(), UIColor(), UIColor(), UIColor()]
             for i in 0..<answerArrayCheck.count {
-                if answerArrayCheck[i] == "right" {
-                    checkColor[i] = UIColor.red
-                } else {
-                    checkColor[i] = UIColor.gray
-                }
+                checkColor[i] = (answerArrayCheck[i] == "right") ? UIColor.red : UIColor.gray
             }
             
             answer1ButtonLabel.setTitleColor(checkColor[0], for: UIControlState())
@@ -158,9 +161,7 @@ class QuizVC: UIViewController {
     
     func updateQuestionLabel() {
         
-        if countQuestion <= 40 {
-            countQuestionLabel.text = checkLabel("\(countQuestion)")
-        }
+        countQuestionLabel.text = (countQuestion <= questionsFullTest.count) ? checkLabel("\(countQuestion)") : "00"
         
         questionLabel.text = self.questionNow.question
         UIView.animate(withDuration: 0.5, delay: 0.1, options: [], animations: { () -> Void in
@@ -192,14 +193,12 @@ class QuizVC: UIViewController {
             self.answer4ButtonLabel.center.x += self.view.bounds.width
             }, completion: nil)
         
-        for i in 0...questionNow.answerArray!.count-1 {
+        for i in 0...questionNow.answerArray.count-1 {
             
             let q = questionNow.answerArray[i]
-            if q == questionNow.answerCorrect! {
-                answerArrayCheck[i] = "right"
-            } else {
-                answerArrayCheck[i] = "wrong"
-            }
+            print(questionNow.answerCorrect)
+            
+            answerArrayCheck[i] = (q == questionNow.answerCorrect) ? "right" : "wrong"
         }
         print(answerArrayCheck)
     }
@@ -222,27 +221,45 @@ class QuizVC: UIViewController {
     func checkLabel(_ label: String) -> String {
         
         let newLabel: String!
-        if label.characters.count == 1 {
-            newLabel = "0\(label)"
-        } else {
-            newLabel = label
-        }
+        
+        newLabel = (label.characters.count == 1) ? "0\(label)" : label
         
         return newLabel
+    }
+    
+    func swipeLeftToQuit() {
+        let messageString: String = "Do you want to cancel the test?"
+        let alert = UIAlertController(title: "!ALERT!", message: messageString, preferredStyle: UIAlertControllerStyle.actionSheet)
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.default, handler: { _ in
+            self.dismiss(animated: true, completion: nil)
+        })
+        let cancelAction = UIAlertAction(title: "Cancel", style: .cancel, handler: nil)
+        
+        alert.addAction(okAction)
+        alert.addAction(cancelAction)
+        present(alert, animated: true, completion: nil)
     }
     
     // MARK: - Lifecyle
     override func viewDidLoad() {
         super.viewDidLoad()
 
-        getManyQuestions(questionsFullTest, numQuestion: 40)
+        questionsGetted = getManyQuestions(questionsFullTest, numQuestion: questionsFullTest.count)
+        
+        updateStateAnswers("normal")
+        hideLabelQuestionAndAnswer()
+        
+        swipeRight = UISwipeGestureRecognizer(target: self, action: #selector(QuizVC.nextQuestionButtonPressed))
+        swipeRight.direction = UISwipeGestureRecognizerDirection.right
+        self.view.addGestureRecognizer(swipeRight)
+        
+        swipeLeft = UISwipeGestureRecognizer(target: self, action: #selector(QuizVC.swipeLeftToQuit))
+        swipeLeft.direction = UISwipeGestureRecognizerDirection.left
+        self.view.addGestureRecognizer(swipeLeft)
         
         beginButtonLabel.isEnabled = true
         nextQuestionButtonLabel.isEnabled = false
-        
-        print(questionsFullTest.count)
-        updateStateAnswers("normal")
-        hideLabelQuestionAndAnswer()
+        swipeRight.isEnabled = false
     }
 
 }

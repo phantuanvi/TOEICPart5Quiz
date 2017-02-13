@@ -8,14 +8,8 @@
 
 import UIKit
 
-class QuestionAndAnswer: NSObject {
+struct QuestionAndAnswer {
     let question: String!
-    var answerArray: [String]!
-    let answerCorrect: String!
-    
-    required init(question: String, answerArray: [String], answerCorrect: String) {
-        self.question = question
-        self.answerArray = answerArray
-        self.answerCorrect = answerCorrect
-    }
+    var answerArray: [String]
+    let answerCorrect: String
 }
